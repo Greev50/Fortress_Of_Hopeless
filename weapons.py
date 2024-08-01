@@ -191,11 +191,9 @@ melee = (Sword, Two_Armed_Sword, Dagger, Touch_Arts)
 guns = (Bow, CrossBow, Pistol, Throwing_Knife)
 magic = (Wand, Magic_Orb, Rune)
 
-def Drop(max_biome_rarity):
-    data = choice(choice([melee,guns,magic]))
+def Drop(max_biome_rarity, type_of_weapon):
+    data = choice(type_of_weapon)
     weapon = data(chooserarity(max_biome_rarity))
     weapon.display_info()
 
     return weapon
-
-# Drop('legendary')
