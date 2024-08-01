@@ -1,14 +1,25 @@
 from random import randint, choice
 
-def chooserarity():
-    rarities = {'common' : 0.5, 'rare' : 0.3, 'epic' : 0.15, 'legendary' : 0.05}
+def chooserarity(max_biome_rarity):
+    rarities = {'common':0.500, 'rare' : 0.300 , 'epic' : 0.150 , 'legendary' : 0.050}
+    max_colvo=0
+    for el in rarities.items():
+        el=list(el)
+        max_colvo+=el[1]*1000
+        if el[0]==max_biome_rarity:
+            break
+
+    max_colvo=int(max_colvo)
     prev = 0
-    dropped_chance = randint(1,100)
+    curr_chance = randint(1, max_colvo)
+    res=None
     for saved_chance in rarities:
-        if dropped_chance in range(int(prev),int(rarities[saved_chance]*100)+int(prev)):
-            return saved_chance
+        if curr_chance in range(int(prev),int(rarities[saved_chance]*1000)+int(prev)):
+            res = saved_chance
+            break
         else:
-            prev += rarities[saved_chance]*100           
+            prev += rarities[saved_chance]*1000
+    return res         
 
 class Weapon:
     def __init__(self, rarity='common', damage=0, attack_speed=0, crit_chance=0, distance=0, name = 'Weapon'):
@@ -28,7 +39,7 @@ class Weapon:
         
     def display_info(self):
         raritymultiply = {'common' : 1, 'rare' : 2, 'epic' : 3, 'legendary' : 4}
-        return f'===========================================\n\t\t=== {self.name} ===\nРедкость: {self.rarity}\n\nУрон: {self.damage*raritymultiply[self.rarity]}\nУдаров за ход: {self.attack_speed}\nШанс крита: {self.crit_chance}\n==========================================='
+        print(f'===========================================\n\t\t=== {self.name} ===\nРедкость: {self.rarity}\n\nУрон: {self.damage*raritymultiply[self.rarity]}\nУдаров за ход: {self.attack_speed}\nШанс крита: {self.crit_chance}\n===========================================')
     
     def return_inv(self):
         return f'{self.rarity} {self.name}'
@@ -180,8 +191,11 @@ melee = (Sword, Two_Armed_Sword, Dagger, Touch_Arts)
 guns = (Bow, CrossBow, Pistol, Throwing_Knife)
 magic = (Wand, Magic_Orb, Rune)
 
-def Drop():
+def Drop(max_biome_rarity):
     data = choice(choice([melee,guns,magic]))
-    res = data(f'{chooserarity()}')
-    res.display_info()
-    return res
+    weapon = data(chooserarity(max_biome_rarity))
+    weapon.display_info()
+
+    return weapon
+
+# Drop('legendary')
