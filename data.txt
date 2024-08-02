@@ -1,0 +1,12 @@
+var = P_rad, E_rad. In_P_Rad, In_E_Rad, 
+
+if E in P_rad:
+    if p in E_rad:
+        run/shoot/escape/ability
+    if p not in E_rad:
+        go-to/escape/ability
+if E not in P_rad
+    if P in E_rad:
+        shoot/ability/escape
+    if p not in E-rad:
+        ability/go-to/escape

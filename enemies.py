@@ -1,4 +1,5 @@
-from random import randint
+from random import randint, choice
+
 class Enemy:
     untouchable = False
     used_untouchable = False
@@ -35,11 +36,49 @@ class Enemy:
             print(f'Вы уклонились от удара монстра!')
             victum.untouchable = False
 
-    # def E_walk(self, arena):
-    #     arena.E_current_cell
-        
+    def E_walk(self, arena, player, direction):
+        True_cord = None
 
+        tostar = arena.E_current_cell-1
         
+        
+         
+
+        if direction == True: # Вправо
+            steps_num_True = (choice(range(arena.E_current_cell+1, arena.cells+1)) - arena.E_current_cell)
+            while True_cord != True:                   
+                if arena.E_current_cell + steps_num_True < arena.cells+1:
+                    if arena.E_current_cell + steps_num_True != arena.P_current_cell:
+                        arena.E_current_cell += steps_num_True
+                        arena.curr_pos[tostar] = '*  '
+                        print(arena.curr_pos)
+                        arena.init_pos()
+                        arena.show_arena()
+                        True_cord = True
+                    else:
+                        True_cord = False
+                        steps_num_False -= 1
+                else:
+                    True_cord = False
+                    steps_num_True -= 1
+        else:           
+            steps_num_False = arena.E_current_cell - choice(range(1, arena.E_current_cell+1))
+            while True_cord != True:                   
+                if arena.E_current_cell - steps_num_False > 0:
+                    if arena.E_current_cell - steps_num_False != arena.P_current_cell:
+                        arena.E_current_cell -= steps_num_False
+                        arena.curr_pos[tostar] = '*  '
+                        arena.init_pos()
+                        arena.show_arena()
+                        True_cord = True
+                    else:
+                        True_cord = False
+                        steps_num_False += 1
+                else:
+                    True_cord = False
+                    steps_num_False += 1
+                    print('2', steps_num_False)
+    
 
     def E_escape(self):
         print(f'{self.name} пытается уклониться!')

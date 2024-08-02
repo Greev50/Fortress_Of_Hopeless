@@ -78,25 +78,31 @@ class Character:
         if randint(0,1) == 1:
             self.untouchable = True
 
-    def P_walk(self, arena, steps):
-        # steps = input('Куда я пойду?\n')
+    def P_walk(self, arena):
+        steps = input('Куда я пойду?\n')
         direction = steps.split()[0]
         steps_num = int(steps.split()[1])
         tostar = arena.P_current_cell-1
         if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево' ):
             if arena.P_current_cell - steps_num > 0:
-                arena.P_current_cell -= steps_num
-                arena.curr_pos[tostar] = '*  '
-                arena.init_pos()
-                arena.show_arena()
+                if arena.P_current_cell - steps_num != arena.E_current_cell:
+                    arena.P_current_cell -= steps_num
+                    arena.curr_pos[tostar] = '*  '
+                    arena.init_pos()
+                    arena.show_arena()
+                else:
+                    print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
             else:
                 print('Там, кажется, стена.. ')
         elif direction in ('Вправо','Вправо', 'В право', 'в право', 'В Право' ):
             if arena.P_current_cell + steps_num < arena.cells+1:
-                arena.P_current_cell += steps_num
-                arena.curr_pos[tostar] = '*  '
-                arena.init_pos()
-                arena.show_arena()
+                if arena.P_current_cell + steps_num != arena.E_current_cell:
+                    arena.P_current_cell += steps_num
+                    arena.curr_pos[tostar] = '*  '
+                    arena.init_pos()
+                    arena.show_arena()
+                else:
+                    print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
             else:
                 print('Там, кажется, стена.. ')
         else:

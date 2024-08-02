@@ -198,4 +198,4 @@ def Drop(max_biome_rarity, type_of_weapon):
 
     return weapon
 
-TestGun = Drop('epic', melee) #Rune('rare')
+TestGun = Rune('rare')
