@@ -10,5 +10,6 @@ a = Arena()
 
 
 # player1.P_walk(a)
-enemy1.E_walk(a, player1, False)
+# enemy1.E_walk(a, player1, False)
 
+a.start_fight(player1, enemy1, a)

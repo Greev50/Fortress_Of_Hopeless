@@ -33,16 +33,13 @@ class Enemy:
                 print(f'Вы неудачно уклонились и получили {self.damage} урона!')
                 victum.hp -= self.damage
         else:
-            print(f'Вы уклонились от удара монстра!')
+            print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
             victum.untouchable = False
 
     def E_walk(self, arena, player, direction):
         True_cord = None
 
-        tostar = arena.E_current_cell-1
-        
-        
-         
+        tostar = arena.E_current_cell-1        
 
         if direction == True: # Вправо
             steps_num_True = (choice(range(arena.E_current_cell+1, arena.cells+1)) - arena.E_current_cell)
@@ -61,23 +58,30 @@ class Enemy:
                 else:
                     True_cord = False
                     steps_num_True -= 1
-        else:           
-            steps_num_False = arena.E_current_cell - choice(range(1, arena.E_current_cell+1))
-            while True_cord != True:                   
-                if arena.E_current_cell - steps_num_False > 0:
+        else:    # Влево
+            steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))
+            while True_cord != True: 
+                if steps_num_False not in (0, 10):
                     if arena.E_current_cell - steps_num_False != arena.P_current_cell:
+                        # print(arena.E_current_cell)
                         arena.E_current_cell -= steps_num_False
+                        # print(arena.E_current_cell)
                         arena.curr_pos[tostar] = '*  '
                         arena.init_pos()
                         arena.show_arena()
                         True_cord = True
                     else:
                         True_cord = False
-                        steps_num_False += 1
+                        steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))
                 else:
                     True_cord = False
-                    steps_num_False += 1
-                    print('2', steps_num_False)
+                    steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))
+
+
+                    
+
+
+                
     
 
     def E_escape(self):

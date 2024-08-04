@@ -89,7 +89,7 @@ class Touch_Arts(Melee): # *
     def __init__(self, rarity):
         super().__init__()
 
-        self.name = 'Искусство пальцев'
+        self.name = 'Искусство Пальцев'
 
         self.damage = randint(3, 30)
         self.attack_speed = randint(2, 5)

@@ -21,3 +21,35 @@ def chooserarity(biome_max_rarity):
             prev += rarities[saved_chance]*1000
     return res
 
+# if arena.E_current_cell - steps_num_False > 0:
+#     # print(f'{arena.E_current_cell} - {steps_num_False} = {arena.E_current_cell - steps_num_False}')
+#     if arena.E_current_cell - steps_num_False != arena.P_current_cell:
+#         arena.E_current_cell -= steps_num_False
+#         arena.curr_pos[tostar] = '*  '
+#         arena.init_pos()
+#         arena.show_arena()
+#         True_cord = True
+#     else:
+#         True_cord = False
+#         steps_num_False += 1
+# else:
+#     True_cord = False
+#     steps_num_False += 1
+#     print('2', steps_num_False)
+
+
+# if self.inv:
+#     ans = input('Какое оружие выкинуть?\n')       
+#     if ans.isdigit():
+#         ans = int(ans)
+#         print(f'Прощай, прекрасный {self.inv[ans].name}!')
+#         del self.inv[ans]
+#     else:
+#         ans = ''.join(ans.split()[0]) + ' ' + ' '.join([x.capitalize() for x in ans.split()[1:]])
+#         if ans not in self.inv:
+#             print('Мне бы его найти вначале')
+#         ans_index = [x.return_inv() for x in self.inv].index(ans)
+#         print(f'Прощай, прекрасный {self.inv[ans].name}!')
+#         del self.inv[ans_index]
+# else:
+#     print('Я не хочу выбрасывать свое единственное оружие!')
