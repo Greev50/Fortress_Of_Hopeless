@@ -96,6 +96,24 @@ class Touch_Arts(Melee): # *
         self.crit_chance = 0.7
         self.rarity = rarity
 
+class Heart_Of_Devil(Melee): # Дроп с босса, моргенштерн
+    def __init__(self):
+        super().__init__()
+
+        self.name = 'Сердце Дьявола'
+
+        self.damage = randint(66, 666)
+        self.attack_speed = randint(1, 6)
+        self.crit_chance = 0.6
+        self.rarity = 'Relic'
+    
+    def bloodbath(self):
+        print('При убийстве вырывает сердце у моба и прибавляет к своему урону 20% от урона моба на 10 минут. Наносит 666 урона. time()')
+        # Цена: 10 и 1 ход
+
+
+
+
 # --------------------------------------------------------------------------------------
 
 class Gun(Weapon):
@@ -191,9 +209,27 @@ melee = (Sword, Two_Armed_Sword, Dagger, Touch_Arts)
 guns = (Bow, CrossBow, Pistol, Throwing_Knife)
 magic = (Wand, Magic_Orb, Rune)
 
-def Drop(max_biome_rarity, type_of_weapon):
+def Random_Drop(max_biome_rarity, type_of_weapon):
     data = choice(type_of_weapon)
     weapon = data(chooserarity(max_biome_rarity))
+    weapon.display_info()
+
+    return weapon
+
+def MeleeDrop(max_biome_rarity):
+    weapon = melee(chooserarity(max_biome_rarity))
+    weapon.display_info()
+
+    return weapon
+
+def GunDrop(max_biome_rarity):
+    weapon = Gun(chooserarity(max_biome_rarity))
+    weapon.display_info()
+
+    return weapon
+
+def MagicDrop(max_biome_rarity):
+    weapon = magic(chooserarity(max_biome_rarity))
     weapon.display_info()
 
     return weapon

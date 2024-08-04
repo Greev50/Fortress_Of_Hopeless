@@ -14,7 +14,13 @@ class Character:
         self.emptyslots = 5 - len(inv)
         self.inv = inv # inv = {curr_weapon, slot_1, slot_2, slot_3}
         self.class_bonus = class_bonus
+        self.distance = 0
 
+    def can_reach_enemy(self, arena):
+        # print(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1)
+        if arena.E_current_cell in range(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1):
+            return True
+        return False
 
     def display_inventory(self):
         print('=============================================================')
@@ -75,11 +81,17 @@ class Character:
                 print('Опять что то в ухе жужжит, не расслышал. Попробуем еще раз!')
 
     def add_weapon(self, weapon):
-        if self.emptyslots > 0:
-            self.inv.append(weapon)
-            print('Фух, еле влезло') or print('Отлично!') or print('Хаха, вот это мощь!')
+        if self.inv:
+            if self.emptyslots > 0:
+                self.inv.append(weapon)
+                print(choice(['Фух, еле влезло', 'Отлично!', 'Хаха, вот это мощь!']))
+            else:
+                print('Не влезает в рюкзак..')
         else:
-            print('Не влезает в рюкзак..')
+            self.inv.append(weapon)
+            self.distance = weapon.distance
+            print('Хаха! Мое первое оружие! Я должен повесить его на стенке дома.')
+
 
     def del_weapon(self):
         if len(self.inv) > 1:
@@ -115,6 +127,7 @@ class Character:
                     return
                 curr_data = self.inv[0]
                 self.inv[0] = self.inv[ans]
+                self.distance = self.inv[ans].distance
                 del self.inv[ans]
                 self.inv.append(curr_data)
                 print(f'{self.inv[0].return_inv()}! Оно подойдет')
@@ -129,6 +142,7 @@ class Character:
                 self.inv[0] = self.inv[ans_index]
                 del self.inv[ans_index]
                 self.inv.append(curr_data)
+                self.distance = self.inv[ans_index].distance
                 print(f'{self.inv[0].return_inv()}. Оно подойдет!')
             self.display_inventory()
         else:
@@ -146,21 +160,23 @@ class Character:
         else:
             print('Черт! Ни одного не осталось..')
     
-    def P_attack(self, enemy):
+    def P_attack(self, enemy, arena):
         # Надо делать print()
         dmg = self.inv[0].total_damage()
-        if enemy.untouchable == False:
-            if enemy.used_untouchable == False:
-                enemy.hp -= dmg
-                print(f'{enemy.name} получил {dmg} урона!')
+        if self.can_reach_enemy(arena) == True:
+            if enemy.untouchable == False:
+                if enemy.used_untouchable == False:
+                    enemy.hp -= dmg
+                    print(f'{enemy.name} получил {dmg} урона!')
+                    
+                elif enemy.used_untouchable == True:
+                    enemy.hp -= dmg
+                    print(f'{enemy.name} неудачно уклонился и получил {dmg} урона!')
                 
-            elif enemy.used_untouchable == True:
-                enemy.hp -= dmg
-                print(f'{enemy.name} неудачно уклонился и получил {dmg} урона!')
-                
-        else:
-            self.untouchable = False
-            return(f'{enemy.name} уклонился от вашего удара')
+            else:
+                self.untouchable = False
+                print (f'{enemy.name} уклонился от вашего удара')
+        print('Боюсь, что я его не достану')
         
     def P_escape(self):
         print('Ну чтож, уклониться так уклониться!')
@@ -179,28 +195,48 @@ class Character:
                     arena.P_current_cell -= steps_num
                     arena.curr_pos[tostar] = '*  '
                     arena.init_pos()
-                    arena.show_arena()
                 else:
                     print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
             else:
                 print('Там, кажется, стена.. ')
-        elif direction in ('Вправо','Вправо', 'В право', 'в право', 'В Право' ):
+        elif direction.lower() in ('вправо', 'в право', 'направо', 'на право'):
             if arena.P_current_cell + steps_num < arena.cells+1:
                 if arena.P_current_cell + steps_num != arena.E_current_cell:
                     arena.P_current_cell += steps_num
                     arena.curr_pos[tostar] = '*  '
                     arena.init_pos()
-                    arena.show_arena()
                 else:
                     print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
             else:
                 print('Там, кажется, стена.. ')
         else:
             print('Куда куда?!?')
+
+    def P_fight_mode(self, E, Arena):
+        ans = str(input('Что же мне делать?\n'))
+        if ans.lower() in ('идти', 'подойти', 'подойду', 'пойду', 'пойти', 'подойти ближе', 'подойду ближе', 'отойти', 'отойду',  'отойти подальше', 'отойду подальше', 'сблизиться', 'сближусь', 'приблизиться', 'приближусь'):
+            self.P_walk(Arena)
+        elif ans.lower() in ('атакую', 'атаковать', 'еще атаковать', 'в атаку', 'в атаку!', 'в атаку!!', 'в атаку!!!', 'урааа', 'ударю', 'ударить', 'получай', 'убить', 'убью', 'четвертую', 'четвертовать', 'забить', 'забью', 'гасить', 'загасить', 'загашу', 'уничтожу', 'уничтожить', 'бить', 'ударить', 'бью', 'ударяю'):
+            self.P_attack(E, Arena)
+        elif ans.lower() in ('уклонюсь', 'уклониться', 'избежать атаки', 'избегу атаки', 'уклоняюсь', 'избегаю атаки', 'увернусь', 'увернуться'):
+            self.P_escape()
+        elif ans.lower() in ('восстановлю здоровье', 'восстановлюсь', 'восстановить здоровье', 'восстановиться', 'захиллюсь', 'захилюсь', 'захиллиться', 'захиллиться', 'зелье здоровья', 'зелье восстановления', 'использую зелье здоровья', 'использовать зелье здоровья', 'использую зелье восстановления', 'использую зелье восстановления', 'восстановить здоровье', 'восстановлю здоровье', 'опа таблеточка', 'зелье лечения', 'использую зелье лечения', 'использовать зелье лечения', 'хил', 'использую хил'):
+            self.P_use_heal()
+        elif ans.lower() in ('открою инвентарь', 'открыть инвентарь', 'инвентарь', 'использую инвентарь', 'где там мое второе оружие?', 'показать инвентарь', 'воспользуюсь инвентарем'):
+            self.inv_interact()
+        elif ans.lower() in ('сменить текущее оружие', 'изменить текущее оружие', 'сменю текущее оружие', 'изменю текущее оружие', 'поменять текущее оружие', 'поменяю текущее оружие', f'поменять {self.inv[0].return_inv}', f'поменяю {self.inv[0].return_inv}', 'взять другое оружие', 'возьму другое оружие', 'сменю свое оружие', 'сменить свое оружие', 'сменю оружие', 'сменить оружие', 'изменить оружие', 'сменить главное оружие', 'поменять главное оружие'):
+            self.change_curr_weapon()
+        elif ans.lower() in ('бежать', 'сбежать', 'сбегу', 'уйти', 'уйду', 'убежать', 'убегу', 'свалить', 'свалю', 'спрятаться', 'спрячусь', 'пощажу его', 'пощадить его', 'пощадить', 'пощажу', 'дарую ему жизнь'):
+            Arena.isfight = False
+            print('Да, пожалуй, так будет лучше..')
+        else:
+            print('Опять что то в ухе жужжит, не расслышал. Попробуем еще раз!')
+
+    
                 
 
-player1 = Character(100, 10, 3, None, [TestGun, Drop('epic', melee)]) 
-player1.inv_interact()  
+player1 = Character(100, 10, 3, None, [TestGun, Random_Drop('epic', melee)]) 
+# player1.inv_interact()  
 
-# player1.add_weapon(Drop('epic', magic))
+
 # player1.display_inventory()
