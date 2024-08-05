@@ -22,6 +22,20 @@ class Character:
             return True
         return False
 
+    def P_return_distance(self, arena):
+        # return self.distance
+        if arena.P_current_cell + self.distance < arena.cells:
+            if arena.P_current_cell - self.distance > 0:
+                return tuple(range(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1))
+            else:
+                return tuple(range(1, arena.P_current_cell + self.distance+1))
+        else:
+            if arena.P_current_cell - self.distance > 0: 
+                return tuple(range(arena.P_current_cell - self.distance, arena.cells+1))
+            else:
+                return tuple(range(1, arena.cells+1))
+
+
     def display_inventory(self):
         print('=============================================================')
         print('\t\t\tИнвентарь  | (1,2,3) - Осмотеть слот')
@@ -189,7 +203,7 @@ class Character:
         direction = steps.split()[0]
         steps_num = int(steps.split()[1])
         tostar = arena.P_current_cell-1
-        if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево' ):
+        if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево', 'назад'):
             if arena.P_current_cell - steps_num > 0:
                 if arena.P_current_cell - steps_num != arena.E_current_cell:
                     arena.P_current_cell -= steps_num
@@ -199,7 +213,7 @@ class Character:
                     print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
             else:
                 print('Там, кажется, стена.. ')
-        elif direction.lower() in ('вправо', 'в право', 'направо', 'на право'):
+        elif direction.lower() in ('вправо', 'в право', 'направо', 'на право', 'вперед', 'вперёд'):
             if arena.P_current_cell + steps_num < arena.cells+1:
                 if arena.P_current_cell + steps_num != arena.E_current_cell:
                     arena.P_current_cell += steps_num
@@ -213,7 +227,7 @@ class Character:
             print('Куда куда?!?')
 
     def P_fight_mode(self, E, Arena):
-        ans = str(input('Что же мне делать?\n'))
+        ans = str(input('\nЧто же мне делать?\n'))
         if ans.lower() in ('идти', 'подойти', 'подойду', 'пойду', 'пойти', 'подойти ближе', 'подойду ближе', 'отойти', 'отойду',  'отойти подальше', 'отойду подальше', 'сблизиться', 'сближусь', 'приблизиться', 'приближусь'):
             self.P_walk(Arena)
         elif ans.lower() in ('атакую', 'атаковать', 'еще атаковать', 'в атаку', 'в атаку!', 'в атаку!!', 'в атаку!!!', 'урааа', 'ударю', 'ударить', 'получай', 'убить', 'убью', 'четвертую', 'четвертовать', 'забить', 'забью', 'гасить', 'загасить', 'загашу', 'уничтожу', 'уничтожить', 'бить', 'ударить', 'бью', 'ударяю'):
@@ -229,13 +243,17 @@ class Character:
         elif ans.lower() in ('бежать', 'сбежать', 'сбегу', 'уйти', 'уйду', 'убежать', 'убегу', 'свалить', 'свалю', 'спрятаться', 'спрячусь', 'пощажу его', 'пощадить его', 'пощадить', 'пощажу', 'дарую ему жизнь'):
             Arena.isfight = False
             print('Да, пожалуй, так будет лучше..')
+            # задержка
+            lost_heal = randint(1, self.heal)
+            self.heal -= lost_heal
+            print(f'По дороге я растерял {lost_heal} зелий здоровья, вот черт..')
         else:
             print('Опять что то в ухе жужжит, не расслышал. Попробуем еще раз!')
 
     
                 
 
-player1 = Character(100, 10, 3, None, [TestGun, Random_Drop('epic', melee)]) 
+# player1 = Character(100, 10, 3, None, [TestGun, Random_Drop('epic', melee)]) 
 # player1.inv_interact()  
 
 

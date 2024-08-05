@@ -33,7 +33,7 @@ class Enemy:
             print('При его убийстве повышается множитель чего то у босса. Либо увеличивается на 10% здоровье, либо на 5% урон, либо на 3% шанс использования способности')
             # Шанс использования способности: 100%
         elif self.ability == 'Неверный поворот':
-            print('Чтоб пройти к боссу, надо будет пройти на 1 моба больше')
+            print('Чтоб пройти к боссу, надо будет победить на одного каменного стража больше')
             # Шанс использования способности: 3% Использует только 1 раз
         elif self.ability == 'Уклонение':
             print('Мышь уклоняется от удара и отнимает у игрока 10хп')
@@ -69,44 +69,31 @@ class Enemy:
             print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
             victum.untouchable = False
 
-    def E_walk(self, arena, player, direction):
-        True_cord = None
+    def E_walk(self, arena, player, go_to_or_run): # True = go to, False = run
 
-        tostar = arena.E_current_cell-1        
+        tostar = arena.E_current_cell-1  
+        run_allowed_cells = tuple(set(range(1, arena.cells))-set(player.P_return_distance(arena)))
+        go_to_allowed_cells = tuple(set(range(1, arena.cells))-set((tuple(run_allowed_cells), arena.P_current_cell)))
 
-        if direction == True: # Вправо
-            steps_num_True = (choice(range(arena.E_current_cell+1, arena.cells+1)) - arena.E_current_cell)
-            while True_cord != True:                   
-                if arena.E_current_cell + steps_num_True < arena.cells+1:
-                    if arena.E_current_cell + steps_num_True != arena.P_current_cell:
-                        arena.E_current_cell += steps_num_True
-                        arena.curr_pos[tostar] = '*  '
-                        print(arena.curr_pos)
-                        arena.init_pos()
-                        arena.show_arena()
-                        True_cord = True
-                    else:
-                        True_cord = False
-                        steps_num_False -= 1
-                else:
-                    True_cord = False
-                    steps_num_True -= 1
-        else:    # Влево
-            steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))
-            while True_cord != True: 
-                if steps_num_False not in (0, 10):
-                    if arena.E_current_cell - steps_num_False != arena.P_current_cell:
-                        arena.E_current_cell -= steps_num_False
-                        arena.curr_pos[tostar] = '*  '
-                        arena.init_pos()
-                        arena.show_arena()
-                        True_cord = True
-                    else:
-                        True_cord = False
-                        steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))
-                else:
-                    True_cord = False
-                    steps_num_False = arena.E_current_cell+1 - choice(range(1, arena.E_current_cell-1))               
+        could_attack = bool(randint(0,1))
+
+        if go_to_or_run == True:
+            if could_attack == True:
+                while self.can_reach_player(arena) == False:
+                    arena.E_current_cell = choice(go_to_allowed_cells)
+                    arena.curr_pos[tostar] = '*  '
+                    arena.init_pos()
+                    tostar = arena.E_current_cell-1 
+            else:
+                arena.E_current_cell = choice(go_to_allowed_cells)
+                arena.curr_pos[tostar] = '*  '
+                arena.init_pos()
+
+        else:
+            arena.E_current_cell = choice(run_allowed_cells)
+            arena.curr_pos[tostar] = '*  '
+            arena.init_pos()
+
 
     def E_escape(self):
         print(f'{self.name} пытается уклониться!')
@@ -114,7 +101,24 @@ class Enemy:
         if randint(0,1) == 1:
             self.untouchable = True
        
-               
+    def can_reach_player(self, arena):
+        if arena.P_current_cell in range(arena.E_current_cell - self.distance, arena.E_current_cell + self.distance+1):
+            return True
+        return False
+    
+
+    def E_return_distance(self, arena):
+        # return self.distance
+        if arena.E_current_cell + self.distance < arena.cells:
+            if arena.E_current_cell - self.distance > 0:
+                return tuple(range(arena.E_current_cell - self.distance, arena.E_current_cell + self.distance+1))
+            else:
+                return tuple(range(1, arena.E_current_cell + self.distance+1))
+        else:
+            if arena.E_current_cell - self.distance > 0: 
+                return tuple(range(arena.E_current_cell - self.distance, arena.cells+1))
+            else:
+                return tuple(range(1, arena.cells+1))
 
 
 # class Fortress_of_Oblivion_Enemy(Enemy):
@@ -270,7 +274,7 @@ class Cursed_Sentinel(Enemy):
         self.can_walk = False
 
 class Cloud_Of_Soul_Pain(Enemy): # При появлении по залу разносятся крики убитых
-    def __init__(self):
+    def __init__(self): # идет по 2 блока каждый ход и дамажит по 1 урона, а если вплотную к игроку, то на 1
         super().__init__()
         self.name = 'Испарения Душевной Боли'
 

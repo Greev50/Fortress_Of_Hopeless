@@ -2,7 +2,7 @@ var = P_rad, E_rad. In_P_Rad, In_E_Rad,
 
 if E in P_rad:
     if p in E_rad:
-        run/shoot/escape/ability
+       escape/shoot/ability
     if p not in E_rad:
         go-to/escape/ability
 if E not in P_rad
@@ -82,7 +82,7 @@ if E not in P_rad
     ,'             ``~~~  ',
    (                        Y
   {                         I
- {      -                    `,
+ {      -                    `, 
  |       ',                   )
  |        |   ,..__      __. Y
  |    .,_./  Y ' / ^Y   J   )|
@@ -122,7 +122,7 @@ dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
 LOGO LOGO LOGO LOGO LOGO
 
 
-print('
+
                               _.--""-._
   .                         ."         ".
  / \    ,^.         /(     Y             |      )\
@@ -160,4 +160,4 @@ print('
                                             (| |
                                              |  \
                                              |lllj
-                                             |||||  ')
+                                             |||||')
