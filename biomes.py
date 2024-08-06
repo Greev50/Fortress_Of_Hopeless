@@ -33,7 +33,7 @@ class Fortress_Courtyard(Biome):
         self.max_rarity = 'rare'
         self.is_bestiary_full = False
 
-class Darkest_Dungeon(Biome):
+class Darkest_Dungeon(Biome): 
     def __init__(self):
         self.name = 'Темные Коридоры'
         self.enemies = darkest_dungeon

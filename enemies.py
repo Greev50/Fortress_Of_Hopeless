@@ -9,9 +9,12 @@ class Enemy:
         self.biome = 'spawn'
         self.hp = 100
         self.damage = 10
+        self.crit_chance = 0
+        self.crit_multiply = 1
         self.ability = 'Нет'
         self.distance = 0
         self.can_walk = True
+        self.danger = 'Мирный'
 
 
     def use_ability(self):
@@ -52,23 +55,35 @@ class Enemy:
             print('Падает в каменную форму и восстанавливает себе жизни в количестве 30% от полученного в данном ходе урона')
             # Шанс использования способности: 15%
         elif self.ability == 'Трехглавый':
-            print('Увеличивает свое хп втрое на 1 минуту, увеличивает дистанцию укуса вдвое')
+            print('Увеличивает свое хп втрое на 1 минуту, увеличивает дистанцию укуса вдвое, а крит шанс до 0,3')
             # Шанс использования способности: 6%    
             
         else:
             print('Такой способности пока что нет')
 
     def E_attack(self, victum):
-        if victum.untouchable == False:
-            if victum.used_untouchable == False:
-                print(f'Вы получили {self.damage} урона!')
-                victum.hp -= self.damage
-            elif victum.used_untouchable == True:
-                print(f'Вы неудачно уклонились и получили {self.damage} урона!')
-                victum.hp -= self.damage
+        if randint(1, 100) <= self.crit_chance:
+            if victum.untouchable == False:
+                if victum.used_untouchable == False:
+                    print(f'Вы получили {self.damage} урона от критическогого удара {self.name}!')
+                    victum.hp -= (self.damage*self.crit_multiply)
+                elif victum.used_untouchable == True:
+                    print(f'Вы неудачно уклонились и получили {self.damage} уронаот критическогого удара {self.name}!')
+                    victum.hp -= (self.damage*self.crit_multiply)
+            else:
+                print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
+                victum.untouchable = False
         else:
-            print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
-            victum.untouchable = False
+            if victum.untouchable == False:
+                if victum.used_untouchable == False:
+                    print(f'Вы получили {self.damage} урона!')
+                    victum.hp -= self.damage
+                elif victum.used_untouchable == True:
+                    print(f'Вы неудачно уклонились и получили {self.damage} урона!')
+                    victum.hp -= self.damage
+            else:
+                print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
+                victum.untouchable = False
 
     def E_walk(self, arena, player, go_to_or_run): # True = go to, False = run
 
@@ -163,8 +178,11 @@ class Bloodsucker(Enemy): # Плавает во рву вокруг замка
         self.biome = 'Подножие замка'
         self.hp = 40
         self.damage = 5
+        self.crit_chance = 0.1
+        self.crit_multiply = 1.3
         self.distance = 1
         self.can_walk = True
+        self.danger = 'Не опаснен'
 
 
 class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Корнями врос в землю рядом с подъемным мостом
@@ -175,9 +193,12 @@ class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Кор�
         self.biome = 'Подножие замка'
         self.hp = 150
         self.damage = 20
+        self.crit_chance = 0.2
+        self.crit_multiply = 1.4
         self.ability = 'Шлепок веткой'
         self.distance = 2
         self.can_walk = False
+        self.danger = 'Не рекомендовано связываться'
 
     def ability_using(self):
         print('Подкашивает игрока и забирает 1 стамину')
@@ -192,8 +213,11 @@ class Draugr_Archer(Enemy):
         self.biome = 'Двор замка' # castle courtyard - название класса биома
         self.hp = 80
         self.damage = 25
+        self.crit_chance = 0.4
+        self.crit_multiply = 1.3
         self.distance = 7
         self.can_walk = True
+        self.danger = 'Может причинить вред'
 
 class Cursed_BloodHound(Enemy): # Несколько собак по очереди. range(2,4)
      def __init__(self):
@@ -203,9 +227,12 @@ class Cursed_BloodHound(Enemy): # Несколько собак по очере�
         self.biome = 'Двор замка' # castle courtyard - название класса биома
         self.hp = 40
         self.damage = 10
+        self.crit_chance = 0.4
+        self.crit_multiply = 1.5
         self.ability = 'Проклятый клык'
         self.distance = 2
         self.can_walk = True
+        self.danger = 'Опасен'
 
 class Devils_Blessing(Enemy): # Фиолетовый светящийся огонек. 
      'При его появлении пишется сообщение: заблудшая душа, пощади, прошу.. '
@@ -219,6 +246,7 @@ class Devils_Blessing(Enemy): # Фиолетовый светящийся ого
         self.ability = 'Анти-Пацифист'
         self.distance = 10
         self.can_walk = False
+        self.danger = 'Мирный'
 
 class Guardian_Skeleton(Enemy):  
      def __init__(self):
@@ -228,8 +256,11 @@ class Guardian_Skeleton(Enemy):
         self.biome = 'Темные коридоры' # Darkest Dungeon, маленькая арена по размерам
         self.hp = 300
         self.damage = 30
+        self.crit_chance = 0.4
+        self.crit_multiply = 1.3
         self.distance = 3
         self.can_walk = True
+        self.danger = 'Не рекомендуется связываться'
 
 class Stone_Sentinel(Enemy):  # Выдвигается стена, преграждая путь, после смерти, если использовал способность, остается на месте, иначе падает. Бьет сплешом. 
      def __init__(self):
@@ -239,9 +270,12 @@ class Stone_Sentinel(Enemy):  # Выдвигается стена, прегра�
         self.biome = 'Темные коридоры'
         self.hp = 500
         self.damage = 30
+        self.crit_chance = 0.4
+        self.crit_multiply = 1.7
         self.ability = 'Неверный поворот'
         self.distance = 4
         self.can_walk = False
+        self.danger = 'Особо опасен'
 
 class Devils_Arachn(Enemy):  # Огромный паук со светящимися глазами, полностью черный, а на заде светящийся белый череп, покрытый кровь. жертв
     def __init__(self): # Питомец Дьявола
@@ -251,9 +285,12 @@ class Devils_Arachn(Enemy):  # Огромный паук со светящими
         self.biome = 'Темные коридоры'
         self.hp = 300
         self.damage = 60
+        self.crit_chance = 0.2
+        self.crit_multiply = 1.3
         self.ability = 'Паучьи оковы'
         self.distance = 2
         self.can_walk = True
+        self.danger = 'Опасен'
 
 class Bad_Dead_Bat(Enemy): 
     def __init__(self):
@@ -263,9 +300,12 @@ class Bad_Dead_Bat(Enemy):
         self.biome = 'Темные коридоры'
         self.hp = 30
         self.damage = 70
+        self.crit_chance = 0.07
+        self.crit_multiply = 1.5
         self.ability = 'Уклонение'
         self.distance = 2
         self.can_walk = True
+        self.danger = 'Особо опасен'
 
 class Court_Gargoyle(Enemy): 
     def __init__(self):
@@ -275,9 +315,12 @@ class Court_Gargoyle(Enemy):
         self.biome = 'Тронный зал' # Большой по размерам
         self.hp = 700
         self.damage = 50
+        self.crit_chance = 0.6
+        self.crit_multiply = 1.2
         self.ability = 'Каменная форма'
         self.distance = 4
         self.can_walk = True
+        self.danger = 'Опасен'
 
 class Cursed_Sentinel(Enemy): 
     def __init__(self):
@@ -287,11 +330,14 @@ class Cursed_Sentinel(Enemy):
         self.biome = 'Тронный зал' # Большой по размерам. Босс - Дьявол.
         self.hp = 1000
         self.damage = 100
+        self.crit_chance = 0.3
+        self.crit_multiply = 1.2
         self.ability = 'Проклятая колонна'
         self.distance = 5
         self.can_walk = False
+        self.danger = 'Особо опасен'
 
-class Cloud_Of_Soul_Pain(Enemy): # При появлении по залу разносятся крики убитых
+class Cloud_Of_Soul_Pain(Enemy): # При появлении по залу разносятся крики убитых этим облаком людей. Само облако - скопление их запертых душ. # При убийстве появляется много голосов со словами "спасибо"
     def __init__(self): # идет по 2 блока каждый ход и дамажит по 1 урона, а если вплотную к игроку, то на 1
         super().__init__()
         self.name = 'Испарения Душевной Боли'
@@ -299,9 +345,12 @@ class Cloud_Of_Soul_Pain(Enemy): # При появлении по залу ра�
         self.biome = 'Тронный зал' # Большой по размерам. Босс - Дьявол.
         self.hp = 100
         self.damage = 1
+        self.crit_chance = 0.01 # При крите разносится оглушительный крик. Вывести билиберду из слов, гдумежду строк будут прослеживаться чертовски тяжелые сообщения. Ex: Меня убила моя же дочь..
+        self.crit_multiply = 10
         self.ability = 'Душевная Боль'
         self.distance = 1
         self.can_walk = True
+        self.danger = 'Летален'
 
 class Devils_Demon(Enemy):  
     def __init__(self): # Правая рука Дьявола
@@ -311,8 +360,11 @@ class Devils_Demon(Enemy):
         self.biome = 'Тронный зал' # Большой по размерам. Босс - Дьявол.
         self.hp = 1300
         self.damage = 70
+        self.crit_chance = 0.3
+        self.crit_multiply = 1.8
         self.distance = 6
         self.can_walk = True
+        self.danger = 'О Господи..'
 
 class Cerberus(Enemy):
     def __init__(self): # Второй питомец Дьявола
@@ -322,9 +374,12 @@ class Cerberus(Enemy):
         self.biome = 'Тронный зал' # Большой по размерам. Босс - Дьявол.
         self.hp = 2000
         self.damage = 65
+        self.crit_chance = 0.1
+        self.crit_multiply = 1.5
         self.ability = 'Трехглавый'
         self.distance = 3
         self.can_walk = True
+        self.danger = 'БЕГИТЕ!!!'
 
 downstairs = (Bloodsucker, Wooden_Sentinel)
 fortress_courtyard = (Draugr_Archer, Cursed_BloodHound, Devils_Blessing)

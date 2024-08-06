@@ -5,18 +5,20 @@ class Character:
     untouchable = False
     used_untouchable = False
     is_inv_opened = False
-    'Ex: player1 = Character(100, 10, 3, None, [starter_sword])'
+    'Ex: player1 = Character(100, 10, 3, [starter_sword])'
 
-    def __init__(self, hp = 100, stamina = 10, heal = 3, class_bonus = None, inv = []):
-        self.hp = hp
-        self.stamina = stamina
-        self.heal = heal
-        self.emptyslots = 5 - len(inv)
-        self.inv = inv # inv = {curr_weapon, slot_1, slot_2, slot_3}
-        self.class_bonus = class_bonus
+    def __init__(self):
+        self.hp = 100
+        self.defense = 0
+        self.stamina = 10
+        self.heal = 3
+        self.inv = [] # inv = {curr_weapon, slot_1, slot_2, slot_3}
+        self.max_slots = 5
+        self.emptyslots = self.max_slots - len(self.inv)
         self.distance = 0
         self.stamina = 10
         self.balance = 0
+        self.deaths_counter = 0
 
     def can_reach_enemy(self, arena):
         # print(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1)
@@ -267,6 +269,27 @@ class Character:
     def regen_stamina(self):
         self.stamina = 10
 
+    def death(self):
+        if self.deaths_counter == 0:
+            self.deaths_counter += 1
+            print('Я.. Повержен..? ')
+            # Пауза
+            print('Игра окончена.')
+            # Длинная пауза
+            print('Или.. Нет?')
+            # Пауза
+            print('Я снова вижу! Но как? Ладно, не суть. Хорошо, что та тварь ушла. Надо бы мне завершить начатое.')
+            print(f'Воскрешение никогда не проходит забесплатно. Никогда. Похоже, я потерял несколько вещей и часть зелий здоровья\n')
+
+            for _ in range(randint(1, len(self.inv))):
+                index = randint(1, (len(self.inv)-1))
+                self.inv[index].display_info()
+                del self.inv[index]
+
+            self.heal -= randint(1, self.heal)
+             
+
+
     def P_fight_mode(self, E, Arena):
         if self.stamina > 1:
             ans = str(input('Что же мне делать?\n'))
@@ -293,7 +316,6 @@ class Character:
                 print('Опять что то в ухе жужжит, не расслышал. Попробуем еще раз!')
         else:
             print('Совсем.. Нет.. Сил..')
-
     
                 
 

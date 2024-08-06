@@ -24,7 +24,7 @@ class Arena:
         self.curr_pos[self.E_current_cell-1] = 'E  '
 
         
-    def show_arena(self,player, enemy): 
+    def show_arena(self, player, enemy): 
         P_Stamina = [0,0,
                      0,0,
                      0,0,
@@ -34,14 +34,15 @@ class Arena:
         for i in range(player.stamina):
             P_Stamina[i] = '*'      
 
-        if self.cells > 14:
-            print('==='*self.cells + f'  |{P_Stamina[0]}  {P_Stamina[1]}|  Информация:')
-            l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} ==')
-            print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')-1) + f'== {self.location_name} =='+ ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))+1) + f'{enemy.hp} HP' + f'  |{P_Stamina[2]}  {P_Stamina[3]}|  \n' + ' '*(self.cells*3) + f'  |{P_Stamina[4]}  {P_Stamina[5]}|  Противник: {enemy.name}\n'+''.join(self.curr_pos)+f'  |{P_Stamina[6]}  {P_Stamina[7]}|  Радиус атаки противника: {enemy.distance}')# 
-        else:
-            print('==='*self.cells + f'  |{P_Stamina[0]}  {P_Stamina[1]}|  ЛОКАЦИЯ: {self.location_name}')
-            l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')))
-            print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP'))+ ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))) + f'{enemy.hp} HP' + f'  |{P_Stamina[2]}  {P_Stamina[3]}|\n' + ' '*(self.cells*3) + f'  |{P_Stamina[4]}  {P_Stamina[5]}|  Противник: {enemy.name}\n'+''.join(self.curr_pos)+f'  |{P_Stamina[6]}  {P_Stamina[7]}|  Радиус атаки противника: {enemy.distance}')# 
+        if len(f'Радиус атаки противника: {enemy.distance}') > len(f'Противник: {enemy.name}'):
+            if self.cells > 14: 
+                print('==='*self.cells + f'  |{P_Stamina[0]}  {P_Stamina[1]}|  Информация о противнике:' +' '*(len(f'Радиус атаки противника: {enemy.distance}')-len(f'Информация о противнике:)'))+'    \|/\t   Информация о персонаже:')
+                l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} ==')
+                print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')-1) + f'== {self.location_name} ==' + ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))+1) + f'{enemy.hp} HP' + f'  |{P_Stamina[2]}  {P_Stamina[3]}|' + ' '*(len(f'  Радиус атаки противника: {enemy.distance}')) + '   \|/\t   \n' + ' '*(self.cells*3) + f'  |{P_Stamina[4]}  {P_Stamina[5]}|  Противник: {enemy.name}'+ ' '*(len(f'Радиус атаки противника: {enemy.distance}')-len(f'Противник: {enemy.name}'))+f'   \|/\t   Текущее оружие: {player.inv[0].return_inv()}' + '\n' + ''.join(self.curr_pos)+f'  |{P_Stamina[6]}  {P_Stamina[7]}|  Радиус атаки противника: {enemy.distance}' + f'   \|/\t   Защита: {int(player.defense*100)}%')#
+            else:
+                print('==='*self.cells + f'  |{P_Stamina[0]}  {P_Stamina[1]}|  ЛОКАЦИЯ: {self.location_name}' + ' '*(len(f'Радиус атаки противника: {enemy.distance}')-len(f'ЛОКАЦИЯ: {self.location_name})'))+'    \|/\t   Информация о персонаже:')
+                l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')))
+                print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP'))+ ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))) + f'{enemy.hp} HP' + f'  |{P_Stamina[2]}  {P_Stamina[3]}|' + ' '*(len(f'  Радиус атаки противника: {enemy.distance}')) + '   \|/   \n' + ' '*(self.cells*3) + f'  |{P_Stamina[4]}  {P_Stamina[5]}|  Противник: {enemy.name}'+ ' '*(len(f'Радиус атаки противника: {enemy.distance}')-len(f'Противник: {enemy.name}'))+f'   \|/\t   Текущее оружие: {player.inv[0].return_inv()}' + '\n'+''.join(self.curr_pos)+f'  |{P_Stamina[6]}  {P_Stamina[7]}|  Радиус атаки противника: {enemy.distance}'+ f'   \|/\t   Защита: {int(player.defense*100)}%')# 
 
 
         colors = {'P' : 'light_cyan',
@@ -67,7 +68,7 @@ class Arena:
             color_interface[self.E_current_cell-1] = colored('== ', colors['E_can'], attrs=['bold'])
 
         [print(x, end = '') for x in color_interface]
-        print(f'  |{P_Stamina[8]}  {P_Stamina[9]}|  Способность: {enemy.ability}')
+        print(f'  |{P_Stamina[8]}  {P_Stamina[9]}|  Опасность: {enemy.danger}' + ' '*(len(f'Радиус атаки противника: {enemy.distance}')-len(f'Опасность {enemy.danger}'))+f'  \|/\t   Зелья здоровья: {player.heal}')
 
     def Drop_Choice(self, player):
         drop_items = ('money', 'weapon', 'heal_potion')
@@ -151,21 +152,25 @@ class Arena:
         self.isfight = True
 
         E = choice(self.biome.enemies)()
-
-        print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..') 
+        if E.can_walk == True:
+            print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..') 
+        else:
+            print(f'{E.name}.. Опасный хмырь. Обойти не получится, прийдется сражаться')
 
         while self.isfight == True:
             self.show_arena(P, E)
             if E.hp > 0:
-                if P.stamina > 0:
-                    P.P_fight_mode(E, self)
+                if P.hp > 0:
+                    if P.stamina > 0:
+                        P.P_fight_mode(E, self)
+                    else:
+                        print('Фух..')
+                        # Пауза
+                        E.E_attack(P)
+                        P.regen_stamina()
                 else:
-                    print('Фух..')
-                    # Пауза
-                    E.E_attack(P)
-
-
-                    P.regen_stamina()
+                    P.death()
+                    self.isfight = False
             else:
                 P.regen_stamina()
                 self.isfight = False
