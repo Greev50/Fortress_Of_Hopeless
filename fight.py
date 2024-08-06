@@ -1,11 +1,15 @@
 from termcolor import colored
+from random import choice
+from weapons import *
+from biomes import *
 
 class Arena:
     isfight = False
 
-    def __init__(self, field_len = 10, name = 'Темные коридоры'):
-        self.cells = field_len
-        self.location_name = name
+    def __init__(self, Biome):
+        self.biome = Biome
+        self.cells = self.biome.arena_size
+        self.location_name = self.biome.name
 
         self.P_current_cell = 1
         self.E_current_cell = self.cells  
@@ -20,7 +24,7 @@ class Arena:
         self.curr_pos[self.E_current_cell-1] = 'E  '
 
         
-    def show_arena(self,player,enemy): 
+    def show_arena(self,player, enemy): 
         P_Stamina = [0,0,
                      0,0,
                      0,0,
@@ -28,7 +32,7 @@ class Arena:
                      0,0]
         
         for i in range(player.stamina):
-            P_Stamina[i] = '*'
+            P_Stamina[i] = '*'      
 
         if self.cells > 14:
             print('==='*self.cells + f'  |{P_Stamina[0]}  {P_Stamina[1]}|  Информация:')
@@ -66,13 +70,29 @@ class Arena:
         print(f'  |{P_Stamina[8]}  {P_Stamina[9]}|  Способность: {enemy.ability}')
         
 
-    def start_fight(self, P, E):
+    def start_fight(self, P):
         self.isfight = True
-        print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..')        
-        while self.isfight == True:
-            self.show_arena(P,E)
-            if P.stamina > 0:
-                P.P_fight_mode(E, self)
-            else:
-                print('Враг атакует')
-                P.regen_stamina()
+
+        E = choice(self.biome.enemies)()
+
+        print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..') 
+
+        # while self.isfight == True:
+        #     self.show_arena(P, E)
+        #     if E.hp > 0:
+        #         if P.stamina > 0:
+        #             P.P_fight_mode(E, self)
+        #         else:
+        #             print('Фух..')
+        #             # Пауза
+        #             E.E_attack(P)
+
+
+        #             P.regen_stamina()
+        #     else:
+        #         P.regen_stamina()
+        #         self.isfight = False
+        #         print(choice(('Это было тяжко..', f'Да уж, {E.name} - серьезный противник! В следующий раз надо быть с ним осторожнее', f'Кажется, мне надо отдохнуть.. \n{E.name} повержен!')))
+        #         # Пауза
+        #         print('Посмотрим, что выпало с этого чудища')
+        MeleeDrop(self.biome.max_rarity) #/  Либо монетки

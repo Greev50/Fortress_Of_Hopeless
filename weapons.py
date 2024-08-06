@@ -232,19 +232,19 @@ def Random_Drop(max_biome_rarity, type_of_weapon):
     return weapon
 
 def MeleeDrop(max_biome_rarity):
-    weapon = melee(chooserarity(max_biome_rarity))
+    weapon = choice(melee)(chooserarity(max_biome_rarity))
     weapon.display_info()
 
     return weapon
 
 def GunDrop(max_biome_rarity):
-    weapon = Gun(chooserarity(max_biome_rarity))
+    weapon = choice(guns)(chooserarity(max_biome_rarity))
     weapon.display_info()
 
     return weapon
 
 def MagicDrop(max_biome_rarity):
-    weapon = magic(chooserarity(max_biome_rarity))
+    weapon = choice(magic)(chooserarity(max_biome_rarity))
     weapon.display_info()
 
     return weapon
