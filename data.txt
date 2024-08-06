@@ -4,7 +4,7 @@ if E in P_rad:
     if p in E_rad:
        escape/shoot/ability
     if p not in E_rad:
-        go-to/escape/ability
+        escape/ability/go-to
 if E not in P_rad
     if P in E_rad:
         shoot/ability/escape

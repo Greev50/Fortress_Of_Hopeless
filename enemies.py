@@ -13,6 +13,7 @@ class Enemy:
         self.distance = 0
         self.can_walk = True
 
+
     def use_ability(self):
         if self.ability == 'Дизориентация':
             print('Отнимает 3 единицы энергии')
@@ -119,6 +120,20 @@ class Enemy:
                 return tuple(range(arena.E_current_cell - self.distance, arena.cells+1))
             else:
                 return tuple(range(1, arena.cells+1))
+            
+    def E_use_ability(self, arena, player):
+        if self.ability == None:
+            print(f'{self.name} странно взбрыкивает и трясет головой. Что за черт..?')
+            # Пауза
+            print('Фух, кажется, пронесло.')
+            # Пауза
+            print(f'О нет.. {self.name} бежит на меня!')
+            while self.can_reach_player != True:
+                self.E_walk(arena, player, True)
+            self.E_attack(player)
+            self.E_attack(player)
+        else:
+            self.ability_using()
 
 
 # class Fortress_of_Oblivion_Enemy(Enemy):
@@ -152,6 +167,7 @@ class Bloodsucker(Enemy): # Плавает во рву вокруг замка
         self.distance = 1
         self.can_walk = True
 
+
 class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Корнями врос в землю рядом с подъемным мостом
     def __init__(self):
         super().__init__()
@@ -163,6 +179,11 @@ class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Кор�
         self.ability = 'Шлепок веткой'
         self.distance = 2
         self.can_walk = False
+
+    def ability_using(self):
+        print('Подкашивает игрока и забирает 1 стамину')
+            # Шанс использования способности: 40%
+
 
 class Draugr_Archer(Enemy):
      def __init__(self):
@@ -308,3 +329,8 @@ class Cerberus(Enemy):
         self.ability = 'Трехглавый'
         self.distance = 3
         self.can_walk = True
+
+downstairs = (Bloodsucker, Wooden_Sentinel)
+fortress_courtyard = (Draugr_Archer, Cursed_BloodHound, Devils_Blessing)
+darkest_dungeon = (Guardian_Skeleton, Stone_Sentinel, Devils_Arachn, Bad_Dead_Bat)
+throne_room = (Court_Gargoyle, Cursed_Sentinel, Cloud_Of_Soul_Pain, Devils_Demon, Cerberus)

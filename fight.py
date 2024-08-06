@@ -21,20 +21,19 @@ class Arena:
 
         
     def show_arena(self,player,enemy): 
-        print('==='*self.cells)
-        l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} ==')
-        print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} =='+ ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))) + f'{enemy.hp} HP'+ '\n\n'+''.join(self.curr_pos))
-        self.P_colored(player)
+        P_Stamina = [0,0,
+                     0,0,
+                     0,0,
+                     0,0,
+                     0,0]
         
+        for i in range(player.stamina):
+            P_Stamina[i] = '*'
 
-    def start_fight(self, P, E):
-        self.isfight = True
-        print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..')        
-        while self.isfight == True:
-            self.show_arena(P,E)
-            P.P_fight_mode(E, self)
+        print('==='*self.cells + f'\t|{P_Stamina[0]}  {P_Stamina[1]}|')
+        l = len(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} ==')
+        print(f'{player.hp} HP'+' '*(self.cells-len(str(player.hp)+' HP')) + f'== {self.location_name} =='+ ' '*(self.cells*3-(l+len(str(enemy.hp)+' HP'))) + f'{enemy.hp} HP' + f'\t|{P_Stamina[2]}  {P_Stamina[3]}|\n' + ' '*(self.cells*3) + f'\t|{P_Stamina[4]}  {P_Stamina[5]}|\n'+''.join(self.curr_pos)+f'\t|{P_Stamina[6]}  {P_Stamina[7]}|')
 
-    def P_colored(self, player):
         colors = {'P' : 'light_cyan',
                   'E' : 'light_magenta',
                   'can' : 'light_green',
@@ -58,5 +57,16 @@ class Arena:
             color_interface[self.E_current_cell-1] = colored('== ', colors['E_can'], attrs=['bold'])
 
         [print(x, end = '') for x in color_interface]
+        print(f'\t|{P_Stamina[8]}  {P_Stamina[9]}|')
+        
 
-
+    def start_fight(self, P, E):
+        self.isfight = True
+        print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..')        
+        while self.isfight == True:
+            self.show_arena(P,E)
+            if P.stamina > 0:
+                P.P_fight_mode(E, self)
+            else:
+                print('Враг атакует')
+                P.regen_stamina()

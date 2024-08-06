@@ -22,24 +22,29 @@ def chooserarity(max_biome_rarity):
     return res         
 
 class Weapon:
-    def __init__(self, rarity='common', damage=0, attack_speed=0, crit_chance=0, distance=0, name = 'Weapon'):
+
+    raritymultiply = {'common' : 1, 'rare' : 1.2, 'epic' : 1.5, 'legendary' : 2, 'relic' : 1}
+
+    def __init__(self, rarity='common', damage=0, attack_speed=0, crit_chance=0, distance=0, name = 'Weapon', crit_multyply = 1):
         self.damage = damage
         self.attack_speed = attack_speed
         self.crit_chance = crit_chance
         self.rarity = rarity
         self.distance = distance
         self.name = name
+        self.crit_multiply = crit_multyply
+        
 
     def total_damage(self):
-        raritymultiply = {'common' : 1, 'rare' : 2, 'epic' : 3, 'legendary' : 4}
+        
         if randint(1, 100) <= int(self.crit_chance*100) == True:
-            return self.damage * raritymultiply[self.rarity] * self.attack_speed * 2
+            print('Критический удар!')
+            return int(self.damage * self.raritymultiply[self.rarity] * self.attack_speed * self.crit_multiply)
         else:
-            return self.damage * raritymultiply[self.rarity] * self.attack_speed
+            return int(self.damage * self.raritymultiply[self.rarity] * self.attack_speed)
         
     def display_info(self):
-        raritymultiply = {'common' : 1, 'rare' : 2, 'epic' : 3, 'legendary' : 4}
-        print(f'===========================================\n\t\t=== {self.name} ===\nРедкость: {self.rarity}\n\nУрон: {self.damage*raritymultiply[self.rarity]}\nУдаров за ход: {self.attack_speed}\nШанс крита: {self.crit_chance}\n===========================================')
+        print(f'===========================================\n\t\t=== {self.name} ===\nРедкость: {self.rarity}\n\nУрон: {int(self.damage * self.raritymultiply[self.rarity] * self.attack_speed)}\nУдаров за ход: {self.attack_speed}\nШанс крита: {self.crit_chance}\nКрит. Множитель: {self.crit_multiply}\n===========================================')
     
     def return_inv(self):
         return f'{self.rarity} {self.name}'
@@ -62,6 +67,7 @@ class Sword(Melee):
         self.attack_speed = 2
         self.crit_chance = 0.5
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4))
 
 class Two_Armed_Sword(Melee):
     def __init__(self, rarity):
@@ -73,6 +79,7 @@ class Two_Armed_Sword(Melee):
         self.attack_speed = 1
         self.crit_chance = 0.2
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8))
 
 class Dagger(Melee):
     def __init__(self, rarity):
@@ -84,6 +91,7 @@ class Dagger(Melee):
         self.attack_speed = 3
         self.crit_chance = 0.6
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2))
 
 class Touch_Arts(Melee): # *
     def __init__(self, rarity):
@@ -95,6 +103,7 @@ class Touch_Arts(Melee): # *
         self.attack_speed = randint(2, 5)
         self.crit_chance = 0.7
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2))
 
 class Heart_Of_Devil(Melee): # Дроп с босса, моргенштерн
     def __init__(self):
@@ -106,12 +115,11 @@ class Heart_Of_Devil(Melee): # Дроп с босса, моргенштерн
         self.attack_speed = randint(1, 6)
         self.crit_chance = 0.6
         self.rarity = 'Relic'
+        self.crit_multiply = choice((1.5, 1.6, 1.7, 1.8, 1.9, 2))
     
     def bloodbath(self):
         print('При убийстве вырывает сердце у моба и прибавляет к своему урону 20% от урона моба на 10 минут. Наносит 666 урона. time()')
         # Цена: 10 и 1 ход
-
-
 
 
 # --------------------------------------------------------------------------------------
@@ -131,6 +139,7 @@ class Pistol(Gun):
         self.attack_speed = 3
         self.crit_chance = 0.3
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6))
 
 class Bow(Gun):
     def __init__(self, rarity):
@@ -142,6 +151,7 @@ class Bow(Gun):
         self.attack_speed = 2
         self.crit_chance = 0.5
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2))
 
 class CrossBow(Gun):
     def __init__(self, rarity):
@@ -153,6 +163,7 @@ class CrossBow(Gun):
         self.attack_speed = 1
         self.crit_chance = 0.2
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4))
 
 class Throwing_Knife(Gun): # *
     def __init__(self, rarity):
@@ -164,6 +175,7 @@ class Throwing_Knife(Gun): # *
         self.attack_speed = randint(1, 7)
         self.crit_chance = 0.08
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7))
 
 # --------------------------------------------------------------------------------------
 
@@ -182,6 +194,7 @@ class Wand(Magic):
         self.attack_speed = 2
         self.crit_chance = 0.3
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7))
 
 class Magic_Orb(Magic):
     def __init__(self, rarity):
@@ -193,6 +206,7 @@ class Magic_Orb(Magic):
         self.attack_speed = 3
         self.crit_chance = 0.3
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3))
 
 class Rune(Magic): # *
     def __init__(self, rarity):
@@ -204,6 +218,7 @@ class Rune(Magic): # *
         self.attack_speed = 1
         self.crit_chance = 0.5
         self.rarity = rarity
+        self.crit_multiply = choice((1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2))
 
 melee = (Sword, Two_Armed_Sword, Dagger, Touch_Arts)
 guns = (Bow, CrossBow, Pistol, Throwing_Knife)
@@ -234,4 +249,4 @@ def MagicDrop(max_biome_rarity):
 
     return weapon
 
-TestGun = Rune('rare')
+TestGun = Sword('rare')
