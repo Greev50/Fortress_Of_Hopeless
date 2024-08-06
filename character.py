@@ -16,6 +16,7 @@ class Character:
         self.class_bonus = class_bonus
         self.distance = 0
         self.stamina = 10
+        self.balance = 0
 
     def can_reach_enemy(self, arena):
         # print(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1)

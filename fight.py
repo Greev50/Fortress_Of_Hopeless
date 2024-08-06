@@ -68,7 +68,84 @@ class Arena:
 
         [print(x, end = '') for x in color_interface]
         print(f'  |{P_Stamina[8]}  {P_Stamina[9]}|  Способность: {enemy.ability}')
+
+    def Drop_Choice(self, player):
+        drop_items = ('money', 'weapon', 'heal_potion')
+        interacted = False
+
+        if self.biome.max_rarity == 'common':
+            pluscoins = randint(1, 25)
+            player.balance += pluscoins
+            self.interacted = True
+            print(f'{pluscoins} монет. Неплохо')
+
+
+        elif self.biome.max_rarity == 'rare':
+            choice_of_drop = choice(drop_items[:2])
+            while interacted == False:
+                if choice_of_drop == 'money':
+                    pluscoins = randint(25, 40)
+                    player.balance += pluscoins
+                    self.interacted = True
+                    print(f'{pluscoins} монет. Неплохо')
+                elif choice_of_drop == 'weapon':
+                    data = Random_Drop(self.location_name.max_rarity, self.biome.type)
+                    ans = str(input('Что же мне с ним сделать?'))
+                    if ans.lower() in ('забрать', 'взять', 'оставить себе', 'заберу', 'возьму', 'оставлю себе', 'подобрать', 'подберу', 'подобрать оружие', 'подберу оружие', 'хочу', 'получу', 'получить'):
+                        player.add_weapon(data)
+                        self.interacted = True
+                    elif ans.lower() in ('выбросить', 'оставить', 'выкинуть', 'не брать', 'выброшу', 'оставлю', 'выкину', 'не возьму', 'не беру'):
+                        print('Пока пока, оружие!')
+                        self.interacted = True
+                    else:
+                        print('Сомневаюсь, что смогу это сделать. Может что то другое?')
+
+
+        elif self.biome.max_rarity == 'epic':
+            choice_of_drop = choice(drop_items[:3])
+            while interacted == False:
+                if choice_of_drop == 'money':
+                    pluscoins = randint(40, 80)
+                    player.balance += pluscoins
+                    self.interacted = True
+                    print(f'{pluscoins} монет. Неплохо')
+                elif choice_of_drop == 'weapon':
+                    data = Random_Drop(self.location_name.max_rarity, self.biome.type)
+                    ans = str(input('Что же мне с ним сделать?'))
+                    if ans.lower() in ('забрать', 'взять', 'оставить себе', 'заберу', 'возьму', 'оставлю себе', 'подобрать', 'подберу', 'подобрать оружие', 'подберу оружие', 'хочу', 'получу', 'получить'):
+                        player.add_weapon(data)
+                        self.interacted = True
+                    elif ans.lower() in ('выбросить', 'оставить', 'выкинуть', 'не брать', 'выброшу', 'оставлю', 'выкину', 'не возьму', 'не беру'):
+                        print('Пока пока, оружие!')
+                        self.interacted = True
+                    else:
+                        print('Сомневаюсь, что смогу это сделать. Может что то другое?')
+                elif choice_of_drop == 'heal_potion':
+                    player.heal += 1
+                    print('Зелье восстановления! Отлично')
         
+        elif self.biome.max_rarity == 'legendary':
+            choice_of_drop = choice(drop_items[:3])
+            while interacted == False:
+                if choice_of_drop == 'money':
+                    pluscoins = randint(80, 140)
+                    player.balance += pluscoins
+                    self.interacted = True
+                    print(f'{pluscoins} монет. Неплохо')
+                elif choice_of_drop == 'weapon':
+                    data = Random_Drop(self.location_name.max_rarity, self.biome.type)
+                    ans = str(input('Что же мне с ним сделать?'))
+                    if ans.lower() in ('забрать', 'взять', 'оставить себе', 'заберу', 'возьму', 'оставлю себе', 'подобрать', 'подберу', 'подобрать оружие', 'подберу оружие', 'хочу', 'получу', 'получить'):
+                        player.add_weapon(data)
+                        self.interacted = True
+                    elif ans.lower() in ('выбросить', 'оставить', 'выкинуть', 'не брать', 'выброшу', 'оставлю', 'выкину', 'не возьму', 'не беру'):
+                        print('Пока пока, оружие!')
+                        self.interacted = True
+                    else:
+                        print('Сомневаюсь, что смогу это сделать. Может что то другое?')
+                elif choice_of_drop == 'heal_potion':
+                    player.heal += 2
+                    print('2 зелья восстановления! Ну вообще шедевр!')       
 
     def start_fight(self, P):
         self.isfight = True
@@ -77,22 +154,24 @@ class Arena:
 
         print(f'Черт, кажется меня заметили! {E.name} направляется ко мне..') 
 
-        # while self.isfight == True:
-        #     self.show_arena(P, E)
-        #     if E.hp > 0:
-        #         if P.stamina > 0:
-        #             P.P_fight_mode(E, self)
-        #         else:
-        #             print('Фух..')
-        #             # Пауза
-        #             E.E_attack(P)
+        while self.isfight == True:
+            self.show_arena(P, E)
+            if E.hp > 0:
+                if P.stamina > 0:
+                    P.P_fight_mode(E, self)
+                else:
+                    print('Фух..')
+                    # Пауза
+                    E.E_attack(P)
 
 
-        #             P.regen_stamina()
-        #     else:
-        #         P.regen_stamina()
-        #         self.isfight = False
-        #         print(choice(('Это было тяжко..', f'Да уж, {E.name} - серьезный противник! В следующий раз надо быть с ним осторожнее', f'Кажется, мне надо отдохнуть.. \n{E.name} повержен!')))
-        #         # Пауза
-        #         print('Посмотрим, что выпало с этого чудища')
-        MeleeDrop(self.biome.max_rarity) #/  Либо монетки
+                    P.regen_stamina()
+            else:
+                P.regen_stamina()
+                self.isfight = False
+                print(choice(('Это было тяжко..', f'Да уж, {E.name} - серьезный противник! В следующий раз надо быть с ним осторожнее', f'Кажется, мне надо отдохнуть.. \n{E.name} повержен!')))
+                # Пауза
+                print('Посмотрим, что выпало с этого чудища')
+                # Задержка
+                self.Drop_Choice(P)
+                
