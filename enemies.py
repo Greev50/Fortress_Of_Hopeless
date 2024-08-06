@@ -9,7 +9,7 @@ class Enemy:
         self.biome = 'spawn'
         self.hp = 100
         self.damage = 10
-        self.ability = None
+        self.ability = 'Нет'
         self.distance = 0
         self.can_walk = True
 
@@ -163,7 +163,6 @@ class Bloodsucker(Enemy): # Плавает во рву вокруг замка
         self.biome = 'Подножие замка'
         self.hp = 40
         self.damage = 5
-        self.ability = None
         self.distance = 1
         self.can_walk = True
 
@@ -193,7 +192,6 @@ class Draugr_Archer(Enemy):
         self.biome = 'Двор замка' # castle courtyard - название класса биома
         self.hp = 80
         self.damage = 25
-        self.ability = None
         self.distance = 7
         self.can_walk = True
 
@@ -230,7 +228,6 @@ class Guardian_Skeleton(Enemy):
         self.biome = 'Темные коридоры' # Darkest Dungeon, маленькая арена по размерам
         self.hp = 300
         self.damage = 30
-        self.ability = None
         self.distance = 3
         self.can_walk = True
 
@@ -314,7 +311,6 @@ class Devils_Demon(Enemy):
         self.biome = 'Тронный зал' # Большой по размерам. Босс - Дьявол.
         self.hp = 1300
         self.damage = 70
-        self.ability = None
         self.distance = 6
         self.can_walk = True
 

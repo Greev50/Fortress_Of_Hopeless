@@ -37,7 +37,7 @@ class Darkest_Dungeon(Biome):
     def __init__(self):
         self.name = 'Темные Коридоры'
         self.enemies = darkest_dungeon
-        self.arena_size = 8
+        self.arena_size = 6
         self.type = melee
         self.rarity = 'epic'
         self.is_bestiary_full = False  
