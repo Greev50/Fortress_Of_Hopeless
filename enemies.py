@@ -6,6 +6,8 @@ class Enemy:
 
     def __init__(self):
         self.name = 'Sheep'
+        self.info = 'Бееее'
+
         self.biome = 'spawn'
         self.hp = 100
         self.damage = 10
@@ -17,7 +19,7 @@ class Enemy:
         self.danger = 'Мирный'
 
 
-    def use_ability(self):
+    def use_ability(self): # !!! Шанс реализовывать в самой функции способности
         if self.ability == 'Дизориентация':
             print('Отнимает 3 единицы энергии')
             # Шанс использования способности: 40%
@@ -37,7 +39,7 @@ class Enemy:
             print('При его убийстве повышается множитель чего то у босса. Либо увеличивается на 10% здоровье, либо на 5% урон, либо на 3% шанс использования способности')
             # Шанс использования способности: 100%
         elif self.ability == 'Неверный поворот':
-            print('Чтоб пройти к боссу, надо будет победить на одного каменного стража больше')
+            print('Закрывает проход к следующей локации на 10 минут. Открыть его можно либо заново заполнив бестиарий, либо подождав 10 минут. ')
             # Шанс использования способности: 3% Использует только 1 раз
         elif self.ability == 'Уклонение':
             print('Мышь уклоняется от удара и отнимает у игрока 10хп')
@@ -61,54 +63,66 @@ class Enemy:
         else:
             print('Такой способности пока что нет')
 
-    def E_attack(self, victum):
-        if randint(1, 100) <= self.crit_chance:
-            if victum.untouchable == False:
-                if victum.used_untouchable == False:
-                    print(f'Вы получили {self.damage} урона от критическогого удара {self.name}!')
-                    victum.hp -= (self.damage*self.crit_multiply)
-                elif victum.used_untouchable == True:
-                    print(f'Вы неудачно уклонились и получили {self.damage} уронаот критическогого удара {self.name}!')
-                    victum.hp -= (self.damage*self.crit_multiply)
+    def E_attack(self, victum, arena):
+        if self.can_reach_player(arena) == True:
+            if randint(1, 100) <= self.crit_chance:
+                if victum.untouchable == False:
+                    if victum.used_untouchable == False:
+                        print(f'Вы получили {self.damage*self.crit_multiply*int(self.damage * (1 - victum.defense))} урона от критическогого удара {self.name}!')
+                        victum.hp -= (self.damage*self.crit_multiply*int(self.damage * (1 - victum.defense)))
+                    elif victum.used_untouchable == True:
+                        print(f'Вы неудачно уклонились и получили {self.damage*self.crit_multiply*int(self.damage * (1 - victum.defense))} уронаот критическогого удара {self.name}!')
+                        victum.hp -= (self.damage*self.crit_multiply*int(self.damage * (1 - victum.defense)))
+                else:
+                    print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
+                    victum.untouchable = False
             else:
-                print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
-                victum.untouchable = False
+                if victum.untouchable == False:
+                    if victum.used_untouchable == False:
+                        print(f'Вы получили {int(self.damage * (1 - victum.defense))} урона!')
+                        victum.hp -= int(self.damage * (1 - victum.defense))
+                    elif victum.used_untouchable == True:
+                        print(f'Вы неудачно уклонились и получили {int(self.damage * (1 - victum.defense))} урона!')
+                        victum.hp -= int(self.damage * (1 - victum.defense))
+                else:
+                    print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
+                    victum.untouchable = False
         else:
-            if victum.untouchable == False:
-                if victum.used_untouchable == False:
-                    print(f'Вы получили {self.damage} урона!')
-                    victum.hp -= self.damage
-                elif victum.used_untouchable == True:
-                    print(f'Вы неудачно уклонились и получили {self.damage} урона!')
-                    victum.hp -= self.damage
-            else:
-                print(f'Хоба на! Видал, как могу? Вот это я акробат! Успешное уклонение даст мне преимущество перед врагом')
-                victum.untouchable = False
+            return False
 
     def E_walk(self, arena, player, go_to_or_run): # True = go to, False = run
 
         tostar = arena.E_current_cell-1  
         run_allowed_cells = tuple(set(range(1, arena.cells))-set(player.P_return_distance(arena)))
         go_to_allowed_cells = tuple(set(range(1, arena.cells))-set((tuple(run_allowed_cells), arena.P_current_cell)))
+        can_walk = True
 
         could_attack = bool(randint(0,1))
 
         if go_to_or_run == True:
-            if could_attack == True:
-                while self.can_reach_player(arena) == False:
+            if go_to_allowed_cells:
+                if could_attack == True:
+                    while self.can_reach_player(arena) == False:
+                        arena.E_current_cell = choice(go_to_allowed_cells)
+                        arena.curr_pos[tostar] = '*  '
+                        arena.init_pos()
+                        tostar = arena.E_current_cell-1 
+                else:
                     arena.E_current_cell = choice(go_to_allowed_cells)
                     arena.curr_pos[tostar] = '*  '
                     arena.init_pos()
-                    tostar = arena.E_current_cell-1 
             else:
-                arena.E_current_cell = choice(go_to_allowed_cells)
-                arena.curr_pos[tostar] = '*  '
-                arena.init_pos()
+                can_walk == False
+                return can_walk
 
         else:
-            arena.E_current_cell = choice(run_allowed_cells)
-            arena.curr_pos[tostar] = '*  '
-            arena.init_pos()
+            if run_allowed_cells:
+                arena.E_current_cell = choice(run_allowed_cells)
+                arena.curr_pos[tostar] = '*  '
+                arena.init_pos()
+            else:
+                can_walk == False
+                return can_walk
 
 
     def E_escape(self):
@@ -148,7 +162,71 @@ class Enemy:
             self.E_attack(player)
             self.E_attack(player)
         else:
-            self.ability_using()
+            # self.ability_using()
+            print('ульта')
+
+    def E_AI(self, player, arena):
+
+        if player.can_reach_enemy(arena) == True:
+            if self.can_reach_player(arena) == True:
+                data = choice(('escape', 'escape', 
+                       'attack', 'attack', 'attack', 'attack', 'attack', 'attack',
+                       'run', 
+                       'ability'))
+                
+                if data == 'escape':
+                    self.E_escape()
+                elif data == 'attack':
+                    if self.E_attack(player, arena) == False:
+                        self.E_walk(arena, player, True)
+                elif data == 'run':
+                    self.E_walk(arena, player, False)
+                elif data == 'ability':
+                    self.E_use_ability(arena, player)
+
+            else:
+                data = choice(('run',
+                       'go-to', 'go-to', 'go-to', 'go-to', 'go-to'
+                       'escape','escape','escape',
+                       'ability', 'ability'))
+                
+                if data == 'run':
+                    self.E_walk(arena, player, False)
+                elif data == 'go-to':
+                    self.E_walk(arena, player, True)
+                elif data == 'escape':
+                    self.E_escape()
+                elif data == 'ability':
+                    self.E_use_ability(arena, player)
+
+        else:
+            if self.can_reach_player(arena) == True:
+                data = choice(('attack', 'attack', 'attack', 'attack', 'attack', 'attack'
+                               'escape', 'escape', 'escape',
+                               'ability', 'ability', 'ability'))
+
+                if data == 'attack':
+                    if self.E_attack(player, arena) == False:
+                        self.E_walk(arena, player, True)
+                elif data == 'escape':
+                    self.E_escape()
+                elif data == 'ability':
+                    self.E_use_ability(arena, player)               
+
+            else:
+
+
+                data = choice(('ability', 'ability', 'ability', 'ability', 
+                               'go-to', 'go-to', 'go-to', 'go-to', 
+                               'escape', 'escape'))
+                
+                if data == 'go-to':
+                    self.E_walk(arena, player, True)
+                elif data == 'ability':
+                    self.E_use_ability(arena, player)
+                elif data == 'escape':
+                    self.E_escape()
+
 
 
 # class Fortress_of_Oblivion_Enemy(Enemy):
@@ -174,6 +252,7 @@ class Bloodsucker(Enemy): # Плавает во рву вокруг замка
     def __init__(self):
         super().__init__()
         self.name = 'Пиявка'
+        self.info = 'Маленькое, противное и склизское создание. Плавает вокруг рва Замка Потерянных. '
 
         self.biome = 'Подножие замка'
         self.hp = 40
@@ -185,10 +264,12 @@ class Bloodsucker(Enemy): # Плавает во рву вокруг замка
         self.danger = 'Не опаснен'
 
 
+
 class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Корнями врос в землю рядом с подъемным мостом
     def __init__(self):
         super().__init__()
         self.name = 'Древесный страж'
+        self.info = 'Охранник подъемного моста Замка Заблудших. Был настолько предан своему делу, что врос в землю и теперь не может двигаться.'
 
         self.biome = 'Подножие замка'
         self.hp = 150
@@ -198,7 +279,7 @@ class Wooden_Sentinel(Enemy): # Охраняет вход в замок. Кор�
         self.ability = 'Шлепок веткой'
         self.distance = 2
         self.can_walk = False
-        self.danger = 'Не рекомендовано связываться'
+        self.danger = 'Избегать'
 
     def ability_using(self):
         print('Подкашивает игрока и забирает 1 стамину')
@@ -217,7 +298,7 @@ class Draugr_Archer(Enemy):
         self.crit_multiply = 1.3
         self.distance = 7
         self.can_walk = True
-        self.danger = 'Может причинить вред'
+        self.danger = 'Частично опасен'
 
 class Cursed_BloodHound(Enemy): # Несколько собак по очереди. range(2,4)
      def __init__(self):
@@ -260,7 +341,7 @@ class Guardian_Skeleton(Enemy):
         self.crit_multiply = 1.3
         self.distance = 3
         self.can_walk = True
-        self.danger = 'Не рекомендуется связываться'
+        self.danger = 'Избегать'
 
 class Stone_Sentinel(Enemy):  # Выдвигается стена, преграждая путь, после смерти, если использовал способность, остается на месте, иначе падает. Бьет сплешом. 
      def __init__(self):
@@ -385,3 +466,8 @@ downstairs = (Bloodsucker, Wooden_Sentinel)
 fortress_courtyard = (Draugr_Archer, Cursed_BloodHound, Devils_Blessing)
 darkest_dungeon = (Guardian_Skeleton, Stone_Sentinel, Devils_Arachn, Bad_Dead_Bat)
 throne_room = (Court_Gargoyle, Cursed_Sentinel, Cloud_Of_Soul_Pain, Devils_Demon, Cerberus)
+
+data_all_enemies = (Bloodsucker, Wooden_Sentinel,
+                    Draugr_Archer, Cursed_BloodHound, Devils_Blessing,
+                    Guardian_Skeleton, Stone_Sentinel, Devils_Arachn, Bad_Dead_Bat,
+                    Court_Gargoyle, Cursed_Sentinel, Cloud_Of_Soul_Pain, Devils_Demon, Cerberus)

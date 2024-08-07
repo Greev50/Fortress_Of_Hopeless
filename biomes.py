@@ -1,5 +1,6 @@
 from weapons import *
 from enemies import *
+from Bestiary import *
 
 class Biome:
     def __init__(self):
@@ -9,11 +10,18 @@ class Biome:
         self.type = None
         self.max_rarity = None
         self.is_bestiary_full = None
-        self.can_spawn_boss = False
+        self.can_spawn_boss = False    
 
-    def choose_enemy(self):
-        return self.choice(self.enemies)
-        
+
+class Fields_Of_Last_Joy:  
+    def __init__(self):
+        self.name = 'Поляна последней радости'
+        self.enemies = []
+        self.arena_size = 30
+        self.type = None
+        self.max_rarity = None
+        self.is_bestiary_full = True
+        self.can_spawn_boss = False     
 
 class Downstairs(Biome): # Крепость заблудших
     def __init__(self):
@@ -37,7 +45,7 @@ class Darkest_Dungeon(Biome):
     def __init__(self):
         self.name = 'Темные Коридоры'
         self.enemies = darkest_dungeon
-        self.arena_size = 6
+        self.arena_size = randint(5, 10)
         self.type = melee
         self.rarity = 'epic'
         self.is_bestiary_full = False  
@@ -45,7 +53,7 @@ class Darkest_Dungeon(Biome):
 class Throne_Room(Biome):
     def __init__(self):
         self.name = 'Тронный Зал'
-        self.enemies = downstairs
+        self.enemies = throne_room
         self.arena_size = 16
         self.type = melee
         self.rarity = 'legendary'

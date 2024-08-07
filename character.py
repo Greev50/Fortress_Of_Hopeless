@@ -1,5 +1,6 @@
 from random import randint
 from weapons import *
+from biomes import *
 
 class Character:
     untouchable = False
@@ -19,6 +20,7 @@ class Character:
         self.stamina = 10
         self.balance = 0
         self.deaths_counter = 0
+        self.curr_biome = Fields_Of_Last_Joy()
 
     def can_reach_enemy(self, arena):
         # print(arena.P_current_cell - self.distance, arena.P_current_cell + self.distance+1)
@@ -95,6 +97,7 @@ class Character:
             elif ans.lower() in ('выйти', 'хочу выйти', 'закрою инвентарь', 'закрыть инвентарь', 'закрыть', 'закрою', 'инвентарь', 'выход', 'все', 'всё', 'выйду'):
                 self.is_inv_opened = False
                 print('Да, пожалуй, на этом все.')
+
             else:
                 print('Опять что то в ухе жужжит, не расслышал. Попробуем еще раз!')
 
@@ -207,7 +210,7 @@ class Character:
                         self.stamina -= 2
                     
                 else:
-                    self.untouchable = False
+                    enemy.untouchable = False
                     print (f'{enemy.name} уклонился от вашего удара')
                     self.stamina -= 2
             else:
@@ -221,7 +224,7 @@ class Character:
             print('Ну чтож, уклониться так уклониться!')
             self.used_untouchable = True
             self.stamina -= 4
-            if randint(0,1) == 1:
+            if randint(0,1) == 1 and self.untouchable == False:
                 self.untouchable = True   
         else:
             print('Сил маловато, кувырок получится слабый. Не буду рисковать')
@@ -229,42 +232,60 @@ class Character:
         
 
     def P_walk(self, arena):
-        steps = input('Куда я пойду?\n')
-        if len(steps.split()) == 2:
-            direction = steps.split()[0]
-            steps_num = int(steps.split()[1])
-        else:
-            direction = steps
-            steps_num = int(input('На сколько шагов?\n'))
+               
+        while True:
 
-        if self.stamina >= steps_num*2:
-            self.stamina -= steps_num*2
-        else:
-            print('Черт.. Совсем нет сил')
-            
-        tostar = arena.P_current_cell-1
-        if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево', 'назад'):
-            if arena.P_current_cell - steps_num > 0:
-                if arena.P_current_cell - steps_num != arena.E_current_cell:
-                    arena.P_current_cell -= steps_num
-                    arena.curr_pos[tostar] = '*  '
-                    arena.init_pos()
+            steps = input('Куда я пойду?\n')
+            if len(steps.split()) == 2:
+                direction = steps.split()[0]
+                steps_num = int(steps.split()[1])
+            elif len(steps.split()) == 1:
+                direction = steps
+                if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево', 'назад','вправо', 'в право', 'направо', 'на право', 'вперед', 'вперёд'):
+                    steps_num = int(input('На сколько шагов?\n'))
                 else:
-                    print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
-            else:
-                print('Там, кажется, стена.. ')
-        elif direction.lower() in ('вправо', 'в право', 'направо', 'на право', 'вперед', 'вперёд'):
-            if arena.P_current_cell + steps_num < arena.cells+1:
-                if arena.P_current_cell + steps_num != arena.E_current_cell:
-                    arena.P_current_cell += steps_num
-                    arena.curr_pos[tostar] = '*  '
-                    arena.init_pos()
+                    pass
+
+            tostar = arena.P_current_cell-1
+            if direction in ('Влево','влево', 'В лево', 'в лево', 'В Лево', 'назад'):
+
+                if self.stamina >= steps_num*2:
+                    self.stamina -= steps_num*2
                 else:
-                    print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
+                    print('Черт.. Совсем нет сил')
+                    break
+                
+                if arena.P_current_cell - steps_num > 0:
+                    if arena.P_current_cell - steps_num != arena.E_current_cell:
+                        arena.P_current_cell -= steps_num
+                        arena.curr_pos[tostar] = '*  '
+                        arena.init_pos()
+                        break
+                    else:
+                        print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
+                else:
+                    print('Там, кажется, стена.. ')
+            elif direction.lower() in ('вправо', 'в право', 'направо', 'на право', 'вперед', 'вперёд'):
+
+                if self.stamina >= steps_num*2:
+                    self.stamina -= steps_num*2
+                else:
+                    print('Черт.. Совсем нет сил')
+                    break
+
+                if arena.P_current_cell + steps_num < arena.cells+1:
+                    if arena.P_current_cell + steps_num != arena.E_current_cell:
+                        arena.P_current_cell += steps_num
+                        arena.curr_pos[tostar] = '*  '
+                        arena.init_pos()
+                        break
+                    else:
+                        print('Враг может наброситься на меня.. Пожалуй, не буду подходить так близко')
+                else:
+                    print('Там, кажется, стена.. ')
             else:
-                print('Там, кажется, стена.. ')
-        else:
-            print('Куда куда?!?')
+                print(choice(('Куда куда?!?', 'Долбаный Яндекс Навигатор.. Ничего не понял')))
+                # Пауза
 
     def regen_stamina(self):
         self.stamina = 10
@@ -299,12 +320,14 @@ class Character:
                 self.P_attack(E, Arena)
             elif ans.lower() in ('уклонюсь', 'уклониться', 'избежать атаки', 'избегу атаки', 'уклоняюсь', 'избегаю атаки', 'увернусь', 'увернуться'):
                 self.P_escape()
-            elif ans.lower() in ('восстановлю здоровье', 'восстановлюсь', 'восстановить здоровье', 'восстановиться', 'захиллюсь', 'захилюсь', 'захиллиться', 'захиллиться', 'зелье здоровья', 'зелье восстановления', 'использую зелье здоровья', 'использовать зелье здоровья', 'использую зелье восстановления', 'использую зелье восстановления', 'восстановить здоровье', 'восстановлю здоровье', 'опа таблеточка', 'зелье лечения', 'использую зелье лечения', 'использовать зелье лечения', 'хил', 'использую хил', 'выпить зелье здоровья', 'выпью зелье здоровья', 'выпью хилку', 'выпить хилку', 'выпить зелье восстановления', 'выпью зелье восстановления'):
+            elif ans.lower() in ('восстановлю здоровье', 'восстановить здоровье',  'захиллюсь', 'захилюсь', 'захиллиться', 'захиллиться', 'зелье здоровья', 'зелье восстановления', 'использую зелье здоровья', 'использовать зелье здоровья', 'использую зелье восстановления', 'использую зелье восстановления', 'восстановить здоровье', 'восстановлю здоровье', 'опа таблеточка', 'зелье лечения', 'использую зелье лечения', 'использовать зелье лечения', 'хил', 'использую хил', 'выпить зелье здоровья', 'выпью зелье здоровья', 'выпью хилку', 'выпить хилку', 'выпить зелье восстановления', 'выпью зелье восстановления'):
                 self.P_use_heal()
             elif ans.lower() in ('открою инвентарь', 'открыть инвентарь', 'инвентарь', 'использую инвентарь', 'где там мое второе оружие?', 'показать инвентарь', 'воспользуюсь инвентарем'):
                 self.inv_interact()
             elif ans.lower() in ('сменить текущее оружие', 'изменить текущее оружие', 'сменю текущее оружие', 'изменю текущее оружие', 'поменять текущее оружие', 'поменяю текущее оружие', f'поменять {self.inv[0].return_inv}', f'поменяю {self.inv[0].return_inv}', 'взять другое оружие', 'возьму другое оружие', 'сменю свое оружие', 'сменить свое оружие', 'сменю оружие', 'сменить оружие', 'изменить оружие', 'сменить главное оружие', 'поменять главное оружие'):
                 self.change_curr_weapon()
+            elif ans.lower() in ('ничего', 'стоять', 'стою', 'не атаковать', 'не атакую', 'восстановлю стамину', 'всосстановлю выносливость', 'восстановлюсь', 'восстановить стамину', 'восстановить выносливость', 'восстановиться', 'пропущу ход', 'пропустить ход'):
+                self.stamina = 0
             elif ans.lower() in ('бежать', 'сбежать', 'сбегу', 'уйти', 'уйду', 'убежать', 'убегу', 'свалить', 'свалю', 'спрятаться', 'спрячусь', 'пощажу его', 'пощадить его', 'пощадить', 'пощажу', 'дарую ему жизнь'):
                 Arena.isfight = False
                 print('Да, пожалуй, так будет лучше..')
