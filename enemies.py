@@ -17,6 +17,27 @@ class Enemy:
         self.distance = 0
         self.can_walk = True
         self.danger = 'Мирный'
+        self.bestiary = [False, False]
+
+    def display_info(self):
+        if self.bestiary[0] == True:
+            print('='*40)
+            print(f'   Название: {self.name}')
+            print(f'   Насколько опасен: {self.danger}')
+            print(f'   Краткое описание: {self.info}')
+            print(f'   Появляется в локации {self.biome}')
+            print('\t  =================')
+            print(f'   Урон: {self.damage}')
+            print(f'   Крит: {self.crit_multiply}, Шанс крита: {self.crit_chance}')
+            print(f'   Дистанция атаки: {self.distance}')
+            if self.bestiary[1] == True:
+                print(f'   Способность: {self.ability}') 
+            else:
+                print(f'   Способность: ???')
+            print('='*40)
+        else:
+            print('Такой враг мне еще не встречался, и записей о нем нет')
+        
 
 
     def use_ability(self): # !!! Шанс реализовывать в самой функции способности
@@ -151,6 +172,10 @@ class Enemy:
                 return tuple(range(1, arena.cells+1))
             
     def E_use_ability(self, arena, player):
+
+        # Шанс
+
+        self.bestiary[1] = True
         if self.ability == None:
             print(f'{self.name} странно взбрыкивает и трясет головой. Что за черт..?')
             # Пауза
@@ -467,7 +492,3 @@ fortress_courtyard = (Draugr_Archer, Cursed_BloodHound, Devils_Blessing)
 darkest_dungeon = (Guardian_Skeleton, Stone_Sentinel, Devils_Arachn, Bad_Dead_Bat)
 throne_room = (Court_Gargoyle, Cursed_Sentinel, Cloud_Of_Soul_Pain, Devils_Demon, Cerberus)
 
-data_all_enemies = (Bloodsucker, Wooden_Sentinel,
-                    Draugr_Archer, Cursed_BloodHound, Devils_Blessing,
-                    Guardian_Skeleton, Stone_Sentinel, Devils_Arachn, Bad_Dead_Bat,
-                    Court_Gargoyle, Cursed_Sentinel, Cloud_Of_Soul_Pain, Devils_Demon, Cerberus)
